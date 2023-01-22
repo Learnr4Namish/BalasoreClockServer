@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const dayjs = require('dayjs')
 const bodyParser = require("body-parser");
 const cors = require("cors");
 app.use(cors({
@@ -7,30 +8,41 @@ app.use(cors({
 }));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-app.listen(process.env.PORT, () => {
+app.listen(3000, () => {
    console.log("BalasoreClockServer successfully started on the environment port"); 
 });
 app.get("/", function(req, res) {
-    const date = new Date();
-    const fullYear = date.getFullYear();
-    const month = date.getMonth();
-    const monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    const thisMonth = monthsList[month];
-    const day = date.getDay();
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const dayName = days[day];
-    const dateToday = date.getDate();
-    const fullDate = String(dateToday) + "/" + String((month + 1)) + "/" + String(fullYear);
-    const getHours = date.getHours();
-  const getMinutes = date.getMinutes();
-  const getSeconds = date.getSeconds();
-  const time24 = `${getHours}:${getMinutes}`;
-  const result12 = date.toLocaleString("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-   });
-  const time12 = result12;
-  // Send the response to the client
-    res.json({fullYear:fullYear, month:month, thisMonth:thisMonth, day:day, dayName:dayName, fullDate:fullDate, time24: time24, time12:time12, seconds:getSeconds});
+        let requestOptions = {
+            method: 'GET',
+          };
+          fetch(`https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Kolkata`, requestOptions)
+          .then(response => response.json())
+          .then(result => showTime(result))
+          .catch(error => res.send(error));
+          function showTime(result) {
+            /*const sample = {
+              "year": 2023,
+            "month": 1,
+            "day": 22,
+            "hour": 11,
+            "minute": 15,
+            "seconds": 17,
+            "milliSeconds": 228,
+            "dateTime": "2023-01-22T11:15:17.2283566",
+            "date": "01/22/2023",
+            "time": "11:15",
+            "timeZone": "Asia/Kolkata",
+            "dayOfWeek": "Sunday",
+            "dstActive": false
+            }*/
+            const year = result["year"];
+        const month = result["month"];
+        const day = result["day"];
+        const hour = result["hour"];
+        const minute = result["minute"];
+        const seconds = result["seconds"];
+        const time = result["time"];
+        const dayOfWeek = result["dayOfWeek"];
+        res.json({year:year, month:month, day:day, hour:hour, minute:minute, seconds:seconds, time:time, dayOfWeek:dayOfWeek});
+          }
 }); 
