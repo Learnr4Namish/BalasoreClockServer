@@ -3,22 +3,24 @@ const app = express();
 const dayjs = require('dayjs')
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const axios = require('axios')
 app.use(cors({
     origin:"*"
 }));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-app.listen(process.env.PORT, () => {
+app.listen(3000, () => {
    console.log("BalasoreClockServer successfully started on the environment port"); 
 });
 app.get("/", function(req, res) {
-        let requestOptions = {
-            method: 'GET',
-          };
-          fetch(`https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Kolkata`, requestOptions)
-          .then(response => response.json())
-          .then(result => showTime(result))
-          .catch(error => res.send(error));
+    axios
+  .get('https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Kolkata')
+  .then(result => {
+    showTime(result.data);
+  })
+  .catch(err => {
+    console.log(err);
+  })
           function showTime(result) {
             /*const sample = {
               "year": 2023,
