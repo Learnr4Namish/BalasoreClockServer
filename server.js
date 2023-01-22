@@ -8,7 +8,7 @@ app.use(cors({
 }));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
    console.log("BalasoreClockServer successfully started on the environment port"); 
 });
 app.get("/", function(req, res) {
